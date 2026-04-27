@@ -501,6 +501,14 @@
       <button class="dash-month-btn" data-month="2" onclick="setDashMonth(2,this)">Febrero</button>
       <button class="dash-month-btn" data-month="3" onclick="setDashMonth(3,this)">Marzo</button>
       <button class="dash-month-btn" data-month="4" onclick="setDashMonth(4,this)">Abril</button>
+      <button class="dash-month-btn" data-month="5" onclick="setDashMonth(5,this)">Mayo</button>
+      <button class="dash-month-btn" data-month="6" onclick="setDashMonth(6,this)">Junio</button>
+      <button class="dash-month-btn" data-month="7" onclick="setDashMonth(7,this)">Julio</button>
+      <button class="dash-month-btn" data-month="8" onclick="setDashMonth(8,this)">Agosto</button>
+      <button class="dash-month-btn" data-month="9" onclick="setDashMonth(9,this)">Septiembre</button>
+      <button class="dash-month-btn" data-month="10" onclick="setDashMonth(10,this)">Octubre</button>
+      <button class="dash-month-btn" data-month="11" onclick="setDashMonth(11,this)">Noviembre</button>
+      <button class="dash-month-btn" data-month="12" onclick="setDashMonth(12,this)">Diciembre</button>
     </div>
   </div>
 
@@ -578,6 +586,14 @@
       <option value="2">Febrero</option>
       <option value="3">Marzo</option>
       <option value="4">Abril</option>
+      <option value="5">Mayo</option>
+      <option value="6">Junio</option>
+      <option value="7">Julio</option>
+      <option value="8">Agosto</option>
+      <option value="9">Septiembre</option>
+      <option value="10">Octubre</option>
+      <option value="11">Noviembre</option>
+      <option value="12">Diciembre</option>
     </select>
   </div>
 
@@ -646,7 +662,9 @@ fetch(SHEET_URL)
       descripcion: r.descripcion,
       detalle: r.detalle || "",
       tipo: r.tipo,
-      tiendas: r.tiendas ? r.tiendas.split(",").map(t => t.trim()) : [],
+      tiendas: r.tiendas ? r.tiendas .split(/[,;]+/) // soporta , o ;
+      .map(t => t.replace("#","").trim())
+  : [],
       inicio: formatDate(r.inicio),
       fin: formatDate(r.fin),
       link: r.link || ""
@@ -664,8 +682,13 @@ const TIPO_COLORS = {
   'Campaña Marca':  { color: '#a78bfa', bg: 'rgba(167,139,250,0.15)' },
 };
 
-const MONTHS = ['Enero','Febrero','Marzo','Abril'];
-const MONTH_NUMS = [1,2,3,4];
+const MONTHS = [
+  'Enero','Febrero','Marzo','Abril',
+  'Mayo','Junio','Julio','Agosto',
+  'Septiembre','Octubre','Noviembre','Diciembre'
+];
+
+const MONTH_NUMS = [1,2,3,4,5,6,7,8,9,10,11,12];
 
 let currentMonth = 2; // Feb 2026 default
 let activeTypes = new Set();
@@ -721,7 +744,10 @@ function setDashMonth(m, btn) {
 function buildDashboard() {
   const src = dashMonth === 0 ? DATA : DATA.filter(a => parseInt(a.inicio.split('-')[1]) === dashMonth);
   console.log("Eventos:", src.filter(a => a.tipo === "Evento"));
-  const MONTHS_LABELS = ['Ene–Abr 2026','Enero 2026','Febrero 2026','Marzo 2026','Abril 2026'];
+  const MONTHS_LABELS = ['Año completo 2026',
+  'Enero 2026','Febrero 2026','Marzo 2026','Abril 2026',
+  'Mayo 2026','Junio 2026','Julio 2026','Agosto 2026',
+  'Septiembre 2026','Octubre 2026','Noviembre 2026','Diciembre 2026'];
   document.getElementById('dash-sub').textContent = 'Acciones registradas · ' + MONTHS_LABELS[dashMonth];
 
   // KPIs
@@ -827,7 +853,7 @@ function toggleTienda(t, btn) {
 }
 
 function changeMonth(dir) {
-  currentMonth = Math.max(1, Math.min(4, currentMonth + dir));
+  currentMonth = Math.max(1, Math.min(12, currentMonth + dir));
   renderCalendar();
 }
 
