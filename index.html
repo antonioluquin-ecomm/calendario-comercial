@@ -652,7 +652,9 @@ function init() {
 const SHEET_URL = "https://opensheet.elk.sh/1Sz4HfE_L44CUO9PegWxFUFW2VC8_ZvLutW_3q4W-6hg/HOJA 1";
 
 let DATA = [];
-
+function isTrue(val) {
+  return val && val.toString().toLowerCase() !== 'false' && val !== '0';
+}
 fetch(SHEET_URL)
   .then(res => res.json())
   .then(rows => {
@@ -667,7 +669,11 @@ fetch(SHEET_URL)
   : [],
       inicio: formatDate(r.inicio),
       fin: formatDate(r.fin),
-      link: r.link || ""
+      link: r.link || "",
+      eventos: [
+  (r['Hot sale'] || r['Hot Sale'] || r['HOT SALE'] || r.HotSale) ? 'Hot Sale' : null,
+  (r['CyberMonday'] || r['Cyber Monday'] || r.CyberMonday) ? 'CyberMonday' : null
+].filter(Boolean)
     }));
     console.log("DATA:", DATA);
 
@@ -693,6 +699,7 @@ const MONTH_NUMS = [1,2,3,4,5,6,7,8,9,10,11,12];
 let currentMonth = 2; // Feb 2026 default
 let activeTypes = new Set();
 let activeTiendas = new Set();
+let activeEventos = new Set();
 
 // ─── UTILS ───────────────────────────────────────────────────────
 function parseDate(s) { return new Date(s + 'T00:00:00'); }
@@ -709,6 +716,7 @@ function applyFilters(actions) {
   return actions.filter(a => {
     if (activeTypes.size > 0 && !activeTypes.has(a.tipo)) return false;
     if (activeTiendas.size > 0 && !a.tiendas.some(t => activeTiendas.has(t))) return false;
+    if (activeEventos.size > 0 && !a.eventos.some(ev => activeEventos.has(ev))) return false;
     return true;
   });
 }
@@ -838,6 +846,16 @@ function buildCalFilters() {
       style="--chip-color:${cls};--chip-bg:rgba(0,0,0,0.2)"
       onclick="toggleTienda('${t}', this)">${t}</button>`;
   }).join('');
+  const eventosF = document.createElement('div');
+
+eventosF.innerHTML = ['Hot Sale','CyberMonday'].map(e => `
+  <button class="filter-chip"
+    onclick="toggleEvento('${e}', this)">
+    ${e}
+  </button>
+`).join('');
+
+document.getElementById('tienda-filters').after(eventosF);
 }
 
 function toggleTipo(t, btn) {
@@ -847,8 +865,26 @@ function toggleTipo(t, btn) {
 }
 
 function toggleTienda(t, btn) {
-  if (activeTiendas.has(t)) { activeTiendas.delete(t); btn.classList.remove('active'); }
-  else { activeTiendas.add(t); btn.classList.add('active'); }
+  if (activeTiendas.has(t)) {
+    activeTiendas.delete(t);
+    btn.classList.remove('active');
+  } else {
+    activeTiendas.add(t);
+    btn.classList.add('active');
+  }
+  renderCalendar();
+}
+
+function toggleEvento(e, btn) {
+  if (activeEventos.has(e)) {
+    activeEventos.delete(e);
+    btn.classList.remove('active');
+  } else {
+    activeEventos.add(e);
+    btn.classList.add('active');
+  }
+
+  console.log("Eventos activos:", [...activeEventos]);
   renderCalendar();
 }
 
@@ -1019,7 +1055,6 @@ function toggleExpand(btn, hiddenCount) {
 
 // ─── INIT ────────────────────────────────────────────────────────
 buildDashboard();
-buildCalFilters();
 buildListFilters();
 renderCalendar();
 renderList();
