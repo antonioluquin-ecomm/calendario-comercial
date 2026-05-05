@@ -43,24 +43,6 @@
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
   }
-  body.dark {
-  --bg: #0f1412;
-  --surface: #18201c;
-  --surface2: #1f2a25;
-  --border: #2c3a33;
-  --accent: #3ea67a;
-  --accent2: #2d7a5a;
-  --text: #e6f1eb;
-  --text2: #9bb7a8;
-  --text3: #6f8f81;
-
-  --fin-bg: rgba(224,123,42,0.2);
-  --cam-bg: rgba(45,122,90,0.2);
-  --lan-bg: rgba(39,174,120,0.2);
-  --cup-bg: rgba(224,90,138,0.2);
-  --env-bg: rgba(42,154,181,0.2);
-  --marca-bg: rgba(138,111,212,0.2);
-}
 
   /* NAV */
   .nav {
@@ -473,52 +455,7 @@
     box-shadow: 0 2px 10px rgba(79,125,255,0.3);
   }
 
-  /* DARK TOGGLE */
-  .dark-toggle {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .dark-toggle:hover { border-color: var(--accent); background: var(--surface); }
-
-  /* CAL SEARCH */
-  .cal-search-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  .cal-search-wrap .search-icon {
-    position: absolute;
-    left: 10px;
-    color: var(--text3);
-    font-size: 13px;
-    pointer-events: none;
-  }
-  .cal-search {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 7px 12px 7px 30px;
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    outline: none;
-    width: 220px;
-    transition: border-color 0.15s, width 0.2s;
-  }
-  .cal-search::placeholder { color: var(--text3); }
-  .cal-search:focus { border-color: var(--accent); width: 280px; }
-
-  /* SEARCH HIGHLIGHT */
-  .action-chip.search-match { outline: 1.5px solid var(--accent); }
-
-
+  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
@@ -544,15 +481,10 @@
       <div class="nav-sub">CALENDARIO 2026</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Modo oscuro">
-      <span id="dark-icon">🌙</span>
-    </button>
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
-      <button class="tab-btn" onclick="switchView('calendario')">Calendario</button>
-      <button class="tab-btn" onclick="switchView('lista')">Lista</button>
-    </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
+    <button class="tab-btn" onclick="switchView('calendario')">Calendario</button>
+    <button class="tab-btn" onclick="switchView('lista')">Lista</button>
   </div>
 </nav>
 
@@ -611,11 +543,6 @@
       <button onclick="changeMonth(-1)">‹</button>
       <div class="month-display" id="month-display">Enero 2026</div>
       <button onclick="changeMonth(1)">›</button>
-    </div>
-
-    <div class="cal-search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" class="cal-search" id="cal-search" placeholder="Buscar acción..." oninput="renderCalendar()">
     </div>
 
     <div class="filter-sep"></div>
@@ -971,8 +898,6 @@ function renderCalendar() {
   const month = currentMonth;
   document.getElementById('month-display').textContent = MONTHS[month-1] + ' 2026';
 
-  const searchQ = (document.getElementById('cal-search')?.value || '').toLowerCase().trim();
-
   const firstDay = new Date(year, month - 1, 1).getDay(); // 0=Sun
   const daysInMonth = new Date(year, month, 0).getDate();
   // Convert to Mon=0
@@ -994,23 +919,10 @@ function renderCalendar() {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const allActions = actionsForDay(year, month, day);
-    let filtered = applyFilters(allActions);
-
-    // Apply search filter
-    if (searchQ) {
-      filtered = filtered.filter(a =>
-        a.titulo.toLowerCase().includes(searchQ) ||
-        (a.descripcion && a.descripcion.toLowerCase().includes(searchQ))
-      );
-    }
+    const filtered = applyFilters(allActions);
 
     const cell = document.createElement('div');
     cell.className = 'cal-day' + (filtered.length > 0 ? ' has-actions' : '');
-
-    // Dim days with no search results when searching
-    if (searchQ && filtered.length === 0 && allActions.length > 0) {
-      cell.style.opacity = '0.4';
-    }
 
     const today = new Date();
     if (today.getFullYear() === year && today.getMonth() + 1 === month && today.getDate() === day) {
@@ -1021,8 +933,7 @@ function renderCalendar() {
     const chips = filtered.map((a, i) => {
       const c = TIPO_COLORS[a.tipo] || { color: '#888', bg: 'rgba(136,136,136,0.15)' };
       const hidden = i >= maxShow ? ' hidden-chip' : '';
-      const matchClass = searchQ ? ' search-match' : '';
-      return `<div class="action-chip${hidden}${matchClass}" style="background:${c.bg};color:${c.color}"
+      return `<div class="action-chip${hidden}" style="background:${c.bg};color:${c.color}"
         onclick="openModal(${DATA.indexOf(a)})" title="${a.titulo}">${a.titulo}</div>`;
     }).join('');
 
@@ -1140,19 +1051,6 @@ function toggleExpand(btn, hiddenCount) {
   const expanded = cell.classList.toggle('expanded');
   btn.textContent = expanded ? '▴ Ver menos' : `▾ +${hiddenCount} más`;
   btn.style.display = 'inline-block';
-}
-
-// ─── DARK MODE ───────────────────────────────────────────────────
-function toggleDark() {
-  const isDark = document.body.classList.toggle('dark');
-  document.getElementById('dark-icon').textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('luquin-dark', isDark ? '1' : '0');
-}
-
-// Restore dark mode preference
-if (localStorage.getItem('luquin-dark') === '1') {
-  document.body.classList.add('dark');
-  document.getElementById('dark-icon').textContent = '☀️';
 }
 
 // ─── INIT ────────────────────────────────────────────────────────
