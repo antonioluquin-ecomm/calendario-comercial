@@ -43,6 +43,24 @@
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
   }
+  body.dark {
+  --bg: #0f1412;
+  --surface: #18201c;
+  --surface2: #1f2a25;
+  --border: #2c3a33;
+  --accent: #3ea67a;
+  --accent2: #2d7a5a;
+  --text: #e6f1eb;
+  --text2: #9bb7a8;
+  --text3: #6f8f81;
+
+  --fin-bg: rgba(224,123,42,0.2);
+  --cam-bg: rgba(45,122,90,0.2);
+  --lan-bg: rgba(39,174,120,0.2);
+  --cup-bg: rgba(224,90,138,0.2);
+  --env-bg: rgba(42,154,181,0.2);
+  --marca-bg: rgba(138,111,212,0.2);
+}
 
   /* NAV */
   .nav {
@@ -455,7 +473,204 @@
     box-shadow: 0 2px 10px rgba(79,125,255,0.3);
   }
 
-  /* SCROLLBAR */
+  /* DARK TOGGLE */
+  .dark-toggle {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dark-toggle:hover { border-color: var(--accent); background: var(--surface); }
+
+  /* CAL SEARCH */
+  .cal-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .cal-search-wrap .search-icon {
+    position: absolute;
+    left: 10px;
+    color: var(--text3);
+    font-size: 13px;
+    pointer-events: none;
+  }
+  .cal-search {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px 7px 30px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    width: 220px;
+    transition: border-color 0.15s, width 0.2s;
+  }
+  .cal-search::placeholder { color: var(--text3); }
+  .cal-search:focus { border-color: var(--accent); width: 280px; }
+
+  /* SEARCH HIGHLIGHT */
+  .action-chip.search-match { outline: 1.5px solid var(--accent); }
+
+  /* CALENDAR VIEW MODE TOGGLE */
+  .cal-view-toggle {
+    display: flex;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .cal-view-btn {
+    padding: 6px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text2);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .cal-view-btn:hover { color: var(--text); background: var(--border); }
+  .cal-view-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* WEEK VIEW */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 20px;
+    align-items: start;
+    height: calc(100vh - 240px);
+  }
+  .week-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 12px;
+  }
+  .week-col::-webkit-scrollbar { width: 3px; }
+  .week-col::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  .week-col-header {
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 2px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+  .week-col-header.today-col {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .week-col-header.today-col .week-dow,
+  .week-col-header.today-col .week-daynum { color: #fff; }
+  .week-dow {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .week-daynum {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    margin-top: 2px;
+    letter-spacing: -0.5px;
+  }
+  .week-date-label {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 1px;
+    font-family: 'DM Mono', monospace;
+  }
+  .week-action-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .week-action-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--card-accent, var(--accent));
+    border-radius: 3px 0 0 3px;
+  }
+  .week-action-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  }
+  .week-card-tipo {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 3px;
+    font-family: 'DM Mono', monospace;
+  }
+  .week-card-title {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+    word-break: break-word;
+  }
+  .week-card-tiendas {
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  .week-empty-day {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 7px;
+    padding: 12px 8px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 11px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .week-nav-label {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
@@ -481,10 +696,15 @@
       <div class="nav-sub">CALENDARIO 2026</div>
     </div>
   </div>
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
-    <button class="tab-btn" onclick="switchView('calendario')">Calendario</button>
-    <button class="tab-btn" onclick="switchView('lista')">Lista</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Modo oscuro">
+      <span id="dark-icon">🌙</span>
+    </button>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
+      <button class="tab-btn" onclick="switchView('calendario')">Calendario</button>
+      <button class="tab-btn" onclick="switchView('lista')">Lista</button>
+    </div>
   </div>
 </nav>
 
@@ -533,16 +753,29 @@
 
 <!-- CALENDARIO -->
 <div id="view-calendario" class="view">
-  <div class="page-header">
-    <div class="page-title">Calendario de Acciones</div>
-    <div class="page-sub">Visualización mensual con filtros por tipo y tienda</div>
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+    <div>
+      <div class="page-title">Calendario de Acciones</div>
+      <div class="page-sub" id="cal-page-sub">Visualización mensual con filtros por tipo y tienda</div>
+    </div>
+    <div class="cal-view-toggle">
+      <button class="cal-view-btn active" id="btn-month-view" onclick="setCalView('month')">📅 Mes</button>
+      <button class="cal-view-btn" id="btn-week-view" onclick="setCalView('week')">📆 Semana</button>
+    </div>
   </div>
 
   <div class="cal-controls">
     <div class="month-nav">
-      <button onclick="changeMonth(-1)">‹</button>
+      <button id="cal-prev-btn" onclick="calNavPrev()">‹</button>
       <div class="month-display" id="month-display">Enero 2026</div>
-      <button onclick="changeMonth(1)">›</button>
+      <button id="cal-next-btn" onclick="calNavNext()">›</button>
+      <button id="cal-today-btn" onclick="goToToday()" style="display:none;font-size:11px;padding:2px 8px;border-radius:4px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;margin-left:4px">Hoy</button>
+    </div>
+    <span class="week-nav-label" id="week-range-label" style="display:none"></span>
+
+    <div class="cal-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="cal-search" id="cal-search" placeholder="Buscar acción..." oninput="renderCurrentCalView()">
     </div>
 
     <div class="filter-sep"></div>
@@ -551,6 +784,7 @@
     <div class="filter-group" id="tienda-filters"></div>
   </div>
 
+  <!-- MONTH GRID -->
   <div class="cal-grid" id="cal-grid">
     <div class="cal-dow">Lun</div>
     <div class="cal-dow">Mar</div>
@@ -560,6 +794,9 @@
     <div class="cal-dow">Sáb</div>
     <div class="cal-dow">Dom</div>
   </div>
+
+  <!-- WEEK GRID -->
+  <div class="week-grid" id="week-grid" style="display:none"></div>
 </div>
 
 <!-- LISTA -->
@@ -861,7 +1098,7 @@ document.getElementById('tienda-filters').after(eventosF);
 function toggleTipo(t, btn) {
   if (activeTypes.has(t)) { activeTypes.delete(t); btn.classList.remove('active'); }
   else { activeTypes.add(t); btn.classList.add('active'); }
-  renderCalendar();
+  renderCurrentCalView();
 }
 
 function toggleTienda(t, btn) {
@@ -872,7 +1109,7 @@ function toggleTienda(t, btn) {
     activeTiendas.add(t);
     btn.classList.add('active');
   }
-  renderCalendar();
+  renderCurrentCalView();
 }
 
 function toggleEvento(e, btn) {
@@ -883,9 +1120,7 @@ function toggleEvento(e, btn) {
     activeEventos.add(e);
     btn.classList.add('active');
   }
-
-  console.log("Eventos activos:", [...activeEventos]);
-  renderCalendar();
+  renderCurrentCalView();
 }
 
 function changeMonth(dir) {
@@ -893,10 +1128,128 @@ function changeMonth(dir) {
   renderCalendar();
 }
 
+// ─── CALENDAR VIEW MODE ──────────────────────────────────────────
+let calView = 'month'; // 'month' | 'week'
+// currentWeekStart: a Date object (Monday of the current week)
+let currentWeekStart = getMondayOfWeek(new Date());
+
+function getMondayOfWeek(date) {
+  const d = new Date(date);
+  const day = d.getDay(); // 0=Sun
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function setCalView(view) {
+  calView = view;
+  document.getElementById('btn-month-view').classList.toggle('active', view === 'month');
+  document.getElementById('btn-week-view').classList.toggle('active', view === 'week');
+  document.getElementById('cal-grid').style.display = view === 'month' ? 'grid' : 'none';
+  document.getElementById('week-grid').style.display = view === 'week' ? 'grid' : 'none';
+  document.getElementById('week-range-label').style.display = view === 'week' ? '' : 'none';
+  document.getElementById('cal-today-btn').style.display = view === 'week' ? '' : 'none';
+  document.getElementById('cal-page-sub').textContent = view === 'month'
+    ? 'Visualización mensual con filtros por tipo y tienda'
+    : 'Visualización semanal · 7 días';
+
+  if (view === 'week') {
+    const d = new Date(2026, currentMonth - 1, 1);
+    currentWeekStart = getMondayOfWeek(d);
+    renderWeek();
+  } else {
+    renderCalendar();
+  }
+}
+
+function goToToday() {
+  currentWeekStart = getMondayOfWeek(new Date());
+  currentMonth = new Date().getMonth() + 1;
+  renderWeek();
+}
+
+function calNavPrev() {
+  if (calView === 'month') changeMonth(-1);
+  else { currentWeekStart.setDate(currentWeekStart.getDate() - 7); renderWeek(); }
+}
+function calNavNext() {
+  if (calView === 'month') changeMonth(1);
+  else { currentWeekStart.setDate(currentWeekStart.getDate() + 7); renderWeek(); }
+}
+function renderCurrentCalView() {
+  if (calView === 'month') renderCalendar();
+  else renderWeek();
+}
+
+// ─── WEEK VIEW ───────────────────────────────────────────────────
+const DOW_NAMES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MONTH_NAMES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+function renderWeek() {
+  const grid = document.getElementById('week-grid');
+  const searchQ = (document.getElementById('cal-search')?.value || '').toLowerCase().trim();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Build 7 days from currentWeekStart
+  const days = Array.from({length: 7}, (_, i) => {
+    const d = new Date(currentWeekStart);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
+
+  // Update label
+  const first = days[0], last = days[6];
+  const sameMonth = first.getMonth() === last.getMonth();
+  const rangeLabel = sameMonth
+    ? `${first.getDate()} – ${last.getDate()} de ${MONTHS[first.getMonth()]} 2026`
+    : `${first.getDate()} ${MONTH_NAMES_SHORT[first.getMonth()]} – ${last.getDate()} ${MONTH_NAMES_SHORT[last.getMonth()]} 2026`;
+  document.getElementById('week-range-label').textContent = rangeLabel;
+  document.getElementById('month-display').textContent = MONTHS[first.getMonth()] + ' 2026';
+
+  grid.innerHTML = days.map((day, i) => {
+    const year = day.getFullYear(), month = day.getMonth() + 1, dayNum = day.getDate();
+    let actions = actionsForDay(year, month, dayNum);
+    actions = applyFilters(actions);
+    if (searchQ) actions = actions.filter(a =>
+      a.titulo.toLowerCase().includes(searchQ) ||
+      (a.descripcion && a.descripcion.toLowerCase().includes(searchQ))
+    );
+
+    const isToday = day.getTime() === today.getTime();
+    const headerCls = isToday ? 'week-col-header today-col' : 'week-col-header';
+
+    const cards = actions.map(a => {
+      const c = TIPO_COLORS[a.tipo] || { color: '#888', bg: 'rgba(136,136,136,0.15)' };
+      const idx = DATA.indexOf(a);
+      return `<div class="week-action-card" style="--card-accent:${c.color};background:${c.bg}" onclick="openModal(${idx})">
+        <div class="week-card-tipo" style="color:${c.color}">${a.tipo}</div>
+        <div class="week-card-title">${a.titulo}</div>
+        <div class="week-card-tiendas">${a.tiendas.map(tiendaPill).join('')}</div>
+      </div>`;
+    }).join('');
+
+    const empty = actions.length === 0
+      ? `<div class="week-empty-day">Sin acciones</div>`
+      : '';
+
+    return `<div class="week-col">
+      <div class="${headerCls}">
+        <div class="week-dow">${DOW_NAMES[i]}</div>
+        <div class="week-daynum">${dayNum}</div>
+        <div class="week-date-label">${MONTH_NAMES_SHORT[day.getMonth()]}</div>
+      </div>
+      ${cards}${empty}
+    </div>`;
+  }).join('');
+}
+
 function renderCalendar() {
   const year = 2026;
   const month = currentMonth;
   document.getElementById('month-display').textContent = MONTHS[month-1] + ' 2026';
+
+  const searchQ = (document.getElementById('cal-search')?.value || '').toLowerCase().trim();
 
   const firstDay = new Date(year, month - 1, 1).getDay(); // 0=Sun
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -919,10 +1272,23 @@ function renderCalendar() {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const allActions = actionsForDay(year, month, day);
-    const filtered = applyFilters(allActions);
+    let filtered = applyFilters(allActions);
+
+    // Apply search filter
+    if (searchQ) {
+      filtered = filtered.filter(a =>
+        a.titulo.toLowerCase().includes(searchQ) ||
+        (a.descripcion && a.descripcion.toLowerCase().includes(searchQ))
+      );
+    }
 
     const cell = document.createElement('div');
     cell.className = 'cal-day' + (filtered.length > 0 ? ' has-actions' : '');
+
+    // Dim days with no search results when searching
+    if (searchQ && filtered.length === 0 && allActions.length > 0) {
+      cell.style.opacity = '0.4';
+    }
 
     const today = new Date();
     if (today.getFullYear() === year && today.getMonth() + 1 === month && today.getDate() === day) {
@@ -933,7 +1299,8 @@ function renderCalendar() {
     const chips = filtered.map((a, i) => {
       const c = TIPO_COLORS[a.tipo] || { color: '#888', bg: 'rgba(136,136,136,0.15)' };
       const hidden = i >= maxShow ? ' hidden-chip' : '';
-      return `<div class="action-chip${hidden}" style="background:${c.bg};color:${c.color}"
+      const matchClass = searchQ ? ' search-match' : '';
+      return `<div class="action-chip${hidden}${matchClass}" style="background:${c.bg};color:${c.color}"
         onclick="openModal(${DATA.indexOf(a)})" title="${a.titulo}">${a.titulo}</div>`;
     }).join('');
 
@@ -1051,6 +1418,19 @@ function toggleExpand(btn, hiddenCount) {
   const expanded = cell.classList.toggle('expanded');
   btn.textContent = expanded ? '▴ Ver menos' : `▾ +${hiddenCount} más`;
   btn.style.display = 'inline-block';
+}
+
+// ─── DARK MODE ───────────────────────────────────────────────────
+function toggleDark() {
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('dark-icon').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('luquin-dark', isDark ? '1' : '0');
+}
+
+// Restore dark mode preference
+if (localStorage.getItem('luquin-dark') === '1') {
+  document.body.classList.add('dark');
+  document.getElementById('dark-icon').textContent = '☀️';
 }
 
 // ─── INIT ────────────────────────────────────────────────────────
